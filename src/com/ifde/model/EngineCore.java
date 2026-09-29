@@ -5,6 +5,12 @@ import java.io.*;
 import java.nio.file.*;
 
 public class EngineCore {
+
+    private DuplicateDataStore dataStore;
+
+    public EngineCore(DuplicateDataStore dS) {
+        this.dataStore = dS;
+    }
     
     public void scanDirectory(Path dir) {
 
@@ -14,12 +20,16 @@ public class EngineCore {
 
                 if(Files.isDirectory(entry))
                     scanDirectory(entry);
-                else
-                    System.out.println(entry.getFileName());
+                else {
+                    String hash = HashGenerator.getHash(Files.readAllBytes(entry));
+                    this.dataStore.addFile(hash, entry);
+                }
             }
         } catch (IOException e) {
             System.out.println("Directory does not exist!");
         }
+
+        dataStore.print();
 
     }
     public static void main(String[] args) {
@@ -30,7 +40,7 @@ public class EngineCore {
         System.out.print("Enter Directory to search : ");
         targetDirec = scan.nextLine();
 
-        EngineCore eCore = new EngineCore();
+        EngineCore eCore = new EngineCore(new DuplicateDataStore());
         eCore.scanDirectory(Path.of(targetDirec));
         
 
