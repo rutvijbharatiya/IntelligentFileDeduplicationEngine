@@ -41,6 +41,7 @@ public class HashGenerator {
 
     private static String bytesToHexString(byte[] hashBytes) {
         StringBuilder hexString = new StringBuilder();
+        
         for (Byte b : hashBytes) {
             String hex = Integer.toHexString(0xff & b);
             if (hex.length() == 1)

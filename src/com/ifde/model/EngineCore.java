@@ -29,6 +29,7 @@ public class EngineCore {
                 }
             }
         } catch (IOException e) {
+            //Redirect output to controller
             System.out.println("Directory does not exist!");
         }
 
@@ -46,5 +47,6 @@ public class EngineCore {
         eCore.scanDirectory(Path.of(targetDirec));
 
         eCore.dataStore.print();
+        scan.close();
     }
 }
