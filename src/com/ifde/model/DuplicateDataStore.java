@@ -12,7 +12,7 @@ public class DuplicateDataStore {
         this.map = new HashMap<>();
     }
     
-    public void addFile(String hash, Path path) {
+    public synchronized void addFile(String hash, Path path) {
 
         if(!map.containsKey(hash))
             map.put(hash, new ArrayList<>());

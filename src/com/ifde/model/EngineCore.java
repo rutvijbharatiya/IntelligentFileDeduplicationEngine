@@ -11,27 +11,29 @@ public class EngineCore {
     public EngineCore(DuplicateDataStore dS) {
         this.dataStore = dS;
     }
-    
+
     public void scanDirectory(Path dir) {
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
-            System.out.println("\nScanning "+dir.toString() + " :");
+            System.out.println("\nScanning " + dir.toString() + " :");
             for (Path entry : stream) {
 
-                if(Files.isDirectory(entry))
+                if (Files.isDirectory(entry))
                     scanDirectory(entry);
                 else {
-                    String hash = HashGenerator.getHash(Files.readAllBytes(entry));
-                    this.dataStore.addFile(hash, entry);
+                    String hash = HashGenerator.getHash(entry);
+
+                    if (hash != null) {
+                        this.dataStore.addFile(hash, entry);
+                    }
                 }
             }
         } catch (IOException e) {
             System.out.println("Directory does not exist!");
         }
 
-        dataStore.print();
-
     }
+
     public static void main(String[] args) {
 
         Scanner scan = new Scanner(System.in);
@@ -42,7 +44,7 @@ public class EngineCore {
 
         EngineCore eCore = new EngineCore(new DuplicateDataStore());
         eCore.scanDirectory(Path.of(targetDirec));
-        
 
+        eCore.dataStore.print();
     }
 }
