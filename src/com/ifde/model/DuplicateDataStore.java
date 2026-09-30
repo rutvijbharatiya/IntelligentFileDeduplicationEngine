@@ -29,6 +29,14 @@ public class DuplicateDataStore {
 
     }
 
+    public HashMap<String, ArrayList<FileRecord>> getMap() {
+        return this.map;
+    }
+
+    // TODO: CONTROLLER - Do not use this print() method for the UI.
+    // Instead, call getMap(), loop through the keys, and use the FileRecord
+    // getter methods to populate the rows of your JTable.
+
     public void print() {
 
         // Redirect output to controller
@@ -51,14 +59,17 @@ public class DuplicateDataStore {
                 Files.delete(file.getPath());
                 String hash = file.getHash();
 
-                if(map.containsKey(hash)) {
+                if (map.containsKey(hash)) {
                     map.get(hash).remove(file);
 
-                    if(map.get(hash).size() == 0)
+                    if (map.get(hash).size() == 0)
                         map.remove(hash);
                 }
             }
-            // Replace when controller is implemented
+            // TODO: CONTROLLER - Instead of just printing this, we should
+            // probably throw an exception here or return a list of failed files
+            // so you can show a Java Swing warning popup to the user!
+
             catch (NoSuchFileException e) {
                 System.out.println("File doesn't exist at path " + file.toString());
             } catch (FileSystemException e) {
@@ -69,8 +80,16 @@ public class DuplicateDataStore {
         }
     }
 
-    public HashMap<String, ArrayList<FileRecord>> getMap() {
-        return this.map;
+    public long calcWastedSpace() {
+
+        long wasteSize = 0;
+
+        for (ArrayList<FileRecord> files : this.map.values()) {
+            if (files.size() > 1)
+                wasteSize += (files.getFirst().getSizeInBytes() * (files.size() - 1));
+        }
+
+        return wasteSize;
     }
 
 }

@@ -24,10 +24,10 @@ public class FileRecord {
         this.sizeInBytes = Files.size(path);
     }
 
-    public String getSizeString() {
+    public static String formatSizeString(long bytes) {
         String[] units = { "B", "KB", "MB", "GB", "TB" };
         int unitIndex = 0;
-        double sizeDouble = sizeInBytes;
+        double sizeDouble = bytes;
 
         while (sizeDouble >= 1024 && unitIndex < units.length - 1) {
             sizeDouble = sizeDouble / 1024;
@@ -51,6 +51,10 @@ public class FileRecord {
 
     public long getSizeInBytes() {
         return sizeInBytes;
+    }
+
+    public String getSizeString() {
+        return formatSizeString(this.sizeInBytes);
     }
 
     public void setHash(String hash) {
