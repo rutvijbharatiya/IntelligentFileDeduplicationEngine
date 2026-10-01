@@ -1,1 +1,16 @@
+# build output
+target/
+out/
+dist/
+dist-input/
 *.class
+*.jar
+dependency-reduced-pom.xml
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# macOS
+.DS_Store

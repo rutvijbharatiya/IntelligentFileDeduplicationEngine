@@ -1,5 +1,6 @@
 package com.ifde.model;
 
+import java.net.http.WebSocket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -23,15 +24,23 @@ public class EngineCore {
     // You need to instantiate EngineCore in your Controller class,
     // implement the ScanListener interface, and pass yourself into the EngineCore
     // constructor.
-    public static void main(String[] args) {
+    public void startScan(Path dir, List<String> types) {
+        isCancelled = false;
+        totalFileCount = 0;
+        totalFileScanned = 0;
+        countTotalFiles(dir, types);
+        scanDirectory(dir, types);
+        if (listener != null && !isCancelled) listener.onProgress(100);
+    }
+    public static void StartScan(String path,String filetypes) {
 
         Scanner scan = new Scanner(System.in);
         String targetDirec, filetype;
 
-        System.out.print("Enter Directory to search : ");
-        targetDirec = scan.nextLine();
-        System.out.print("Enter file type (leave blank for all) : ");
-        filetype = scan.nextLine();
+//        System.out.print("Enter Directory to search : ");
+        targetDirec = path;
+//        System.out.print("Enter file type (leave blank for all) : ");
+        filetype = filetypes;
 
         List<String> listType = new ArrayList<>();
         listType.add(filetype.toLowerCase());
@@ -49,8 +58,8 @@ public class EngineCore {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
             // TODO: CONTROLLER - Replace this System.out.println with
             // listener.onLogMessage() so it prints to the UI's scrolling text box!
+            listener.onLogMessage(dir.toString());
 
-            System.out.println("Scanning " + dir.toString() + "...");
 
             for (Path entry : stream) {
 
@@ -72,14 +81,15 @@ public class EngineCore {
                 // TODO: CONTROLLER - Uncomment listener.onProgress(progress) so the green bar moves!
                 if (totalFileCount > 0 && listener != null) {
                     int progress = (totalFileScanned * 100) / totalFileCount;
-                    // listener.onProgress(progress); 
+                    listener.onProgress(progress);
                 }
 
             }
         } catch (IOException | DirectoryIteratorException e) {
 
             // Redirect output to Controller
-            System.out.println("Skipped unreadable directory: " + dir.toString());
+            listener.onLogMessage("Skipped unreadable directory: " + dir.toString());
+
 
         }
 
@@ -103,7 +113,9 @@ public class EngineCore {
         } catch (IOException | DirectoryIteratorException e) {
 
             // Redirect output to Controller
-            System.out.println("Skipped unreadable directory: " + dir.toString());
+            listener.onLogMessage("Skipped unreadable directory: " + dir.toString());
+
+//            System.out.println("Skipped unreadable directory: " + dir.toString());
 
         }
     }

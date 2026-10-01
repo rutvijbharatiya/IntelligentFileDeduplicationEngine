@@ -22,7 +22,9 @@ public class DuplicateDataStore {
         if (!map.containsKey(hash))
             map.put(hash, new ArrayList<>());
         try {
-            map.get(hash).add(new FileRecord(path));
+            FileRecord rec = new FileRecord(path);
+            rec.setHash(hash);
+            map.get(hash).add(rec);
         } catch (IOException e) {
             System.out.println("I/O error: " + e.getMessage());
         }

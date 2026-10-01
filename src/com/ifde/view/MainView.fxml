@@ -10,6 +10,7 @@
 <?import java.lang.String?>
 <VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.ifde.controller.MainViewController"
       styleClass="app-root"
       stylesheets="@Application.css"
       prefWidth="1100" prefHeight="740" minWidth="900" minHeight="640"
@@ -37,7 +38,7 @@
         <HBox spacing="10" alignment="CENTER_LEFT">
             <Label text="Select Folder:" styleClass="bold-label"/>
             <TextField fx:id="folderPathField" promptText="Choose a folder to scan..." HBox.hgrow="ALWAYS"/>
-            <Button fx:id="browseButton" text="📂  Browse..." styleClass="secondary-button"/>
+            <Button fx:id="browseButton" text="📂  Browse..." styleClass="secondary-button" onAction="#onBrowse"/>
 
             <Separator orientation="VERTICAL"/>
 
@@ -62,14 +63,14 @@
                 </value>
             </ComboBox>
 
-            <Button fx:id="scanButton" text="▶   Scan Now" styleClass="primary-button" prefWidth="220"/>
+            <Button fx:id="scanButton" text="▶   Scan Now" styleClass="primary-button" prefWidth="220" onAction="#onScan"/>
         </HBox>
 
         <HBox spacing="10" alignment="CENTER_LEFT">
             <Label fx:id="scanStatusLabel" text="Scanning..." styleClass="bold-label" minWidth="90"/>
             <ProgressBar fx:id="scanProgressBar" progress="0.0" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
             <Label fx:id="progressPercentLabel" text="0%" minWidth="40"/>
-            <Button fx:id="stopButton" text="■  Stop" styleClass="secondary-button" prefWidth="120"/>
+            <Button fx:id="stopButton" text="■  Stop" styleClass="secondary-button" prefWidth="120" onAction="#onStop"/>
         </HBox>
     </VBox>
 
@@ -182,11 +183,11 @@
                 <Label text="Actions" styleClass="section-title"/>
             </HBox>
             <Button fx:id="deleteSelectedButton" text="🗑   Delete Selected"
-                    styleClass="danger-button" maxWidth="Infinity"/>
+                    styleClass="danger-button" maxWidth="Infinity" onAction="#onDeleteSelected"/>
             <Button fx:id="autoSelectButton" text="✔✔  Auto-Select All But One"
-                    styleClass="secondary-button" maxWidth="Infinity"/>
+                    styleClass="secondary-button" maxWidth="Infinity" onAction="#onAutoSelect"/>
             <Button fx:id="rescanButton" text="⟳   Rescan"
-                    styleClass="secondary-button" maxWidth="Infinity"/>
+                    styleClass="secondary-button" maxWidth="Infinity" onAction="#onRescan"/>
         </VBox>
     </HBox>
 </VBox>
