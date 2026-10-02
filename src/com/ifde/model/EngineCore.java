@@ -1,7 +1,5 @@
 package com.ifde.model;
 
-import java.net.http.WebSocket;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.io.*;
@@ -20,51 +18,37 @@ public class EngineCore {
         this.listener = listener;
     }
 
-    // TODO: CONTROLLER - This main() method is just for CLI testing.
-    // You need to instantiate EngineCore in your Controller class,
-    // implement the ScanListener interface, and pass yourself into the EngineCore
-    // constructor.
     public void startScan(Path dir, List<String> types) {
         isCancelled = false;
         totalFileCount = 0;
         totalFileScanned = 0;
+
         countTotalFiles(dir, types);
-        scanDirectory(dir, types);
-        if (listener != null && !isCancelled) listener.onProgress(100);
-    }
-    public static void StartScan(String path,String filetypes) {
+        if (!this.isCancelled)
+            scanDirectory(dir, types);
 
-        Scanner scan = new Scanner(System.in);
-        String targetDirec, filetype;
-
-//        System.out.print("Enter Directory to search : ");
-        targetDirec = path;
-//        System.out.print("Enter file type (leave blank for all) : ");
-        filetype = filetypes;
-
-        List<String> listType = new ArrayList<>();
-        listType.add(filetype.toLowerCase());
-
-        EngineCore eCore = new EngineCore(new DuplicateDataStore(), null);
-        eCore.countTotalFiles(Path.of(targetDirec), listType);
-        eCore.scanDirectory(Path.of(targetDirec), listType);
-
-        eCore.dataStore.print();
-        scan.close();
+        if (listener != null) {
+            if (isCancelled)
+                listener.onLogMessage("Scanning stopped by user");
+            else {
+                listener.onProgress(100);
+                listener.onLogMessage("Scanning Finished Successfully!");
+            }
+        }
     }
 
     public void scanDirectory(Path dir, List<String> types) {
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
-            // TODO: CONTROLLER - Replace this System.out.println with
-            // listener.onLogMessage() so it prints to the UI's scrolling text box!
-            listener.onLogMessage(dir.toString());
-
+            listener.onLogMessage("Scanning " + dir.toString());
 
             for (Path entry : stream) {
 
                 if (isCancelled)
                     break;
+
+                if (Files.isSymbolicLink(entry))
+                    continue;
 
                 if (Files.isDirectory(entry))
                     scanDirectory(entry, types);
@@ -78,7 +62,6 @@ public class EngineCore {
                     }
                 }
 
-                // TODO: CONTROLLER - Uncomment listener.onProgress(progress) so the green bar moves!
                 if (totalFileCount > 0 && listener != null) {
                     int progress = (totalFileScanned * 100) / totalFileCount;
                     listener.onProgress(progress);
@@ -87,9 +70,7 @@ public class EngineCore {
             }
         } catch (IOException | DirectoryIteratorException e) {
 
-            // Redirect output to Controller
             listener.onLogMessage("Skipped unreadable directory: " + dir.toString());
-
 
         }
 
@@ -103,6 +84,9 @@ public class EngineCore {
                 if (isCancelled)
                     break;
 
+                if (Files.isSymbolicLink(entry))
+                    continue;
+
                 if (Files.isDirectory(entry))
                     countTotalFiles(entry, types);
 
@@ -111,12 +95,7 @@ public class EngineCore {
                 }
             }
         } catch (IOException | DirectoryIteratorException e) {
-
-            // Redirect output to Controller
-            listener.onLogMessage("Skipped unreadable directory: " + dir.toString());
-
-//            System.out.println("Skipped unreadable directory: " + dir.toString());
-
+            // Silently ignore during counting phase
         }
     }
 

@@ -35,25 +35,6 @@ public class DuplicateDataStore {
         return this.map;
     }
 
-    // TODO: CONTROLLER - Do not use this print() method for the UI.
-    // Instead, call getMap(), loop through the keys, and use the FileRecord
-    // getter methods to populate the rows of your JTable.
-
-    public void print() {
-
-        // Redirect output to controller
-        for (String hash : map.keySet()) {
-            if (map.get(hash).size() <= 1)
-                continue;
-            System.out.println("Hash : " + hash);
-            System.out.print("Paths : ");
-            for (FileRecord file : map.get(hash)) {
-                System.out.print(" " + file.getName() + " " + file.getSizeString() + " " + file.getLastModified());
-            }
-            System.out.println("\n");
-        }
-    }
-
     public void deleteFiles(List<FileRecord> files) {
 
         for (FileRecord file : files) {
