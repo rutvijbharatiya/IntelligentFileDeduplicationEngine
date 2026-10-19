@@ -3,10 +3,10 @@ package com.ifde.model;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.security.*;
 
+//Generates the Hash of a file
 public class HashGenerator {
 
     public static String getHash(Path path) {
@@ -30,11 +30,9 @@ public class HashGenerator {
 
             return bytesToHexString(hashBytes);
         } catch (IOException e) {
-            System.out.print("Can't read file at " + path.toString());
             return null;
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("SHA-256 algo isn't inside provider list");
-            return null;
+            throw new IllegalStateException("SHA-256 algorithm missing from Java runtime", e);
         }
 
     }

@@ -203,7 +203,12 @@ public class MainViewController {
         a.setHeaderText(null);
         if (a.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
 
-        store.deleteFiles(toDelete);
+        List<FileRecord> failed = store.deleteFiles(toDelete);
         showResults();
+
+        if(!failed.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, failed.size() + " file(s) could not be deleted (they may be in use or protected).");                                                                       
+            alert.showAndWait();
+        }
     }
 }

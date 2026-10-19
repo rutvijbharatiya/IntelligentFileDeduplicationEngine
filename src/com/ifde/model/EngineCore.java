@@ -1,7 +1,6 @@
 package com.ifde.model;
 
 import java.util.List;
-import java.util.Scanner;
 import java.io.*;
 import java.nio.file.*;
 
@@ -69,9 +68,7 @@ public class EngineCore {
 
             }
         } catch (IOException | DirectoryIteratorException e) {
-
             listener.onLogMessage("Skipped unreadable directory: " + dir.toString());
-
         }
 
     }

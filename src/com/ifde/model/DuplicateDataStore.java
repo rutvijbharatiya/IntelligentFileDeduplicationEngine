@@ -1,13 +1,8 @@
 package com.ifde.model;
 
 import java.io.IOException;
-import java.nio.file.FileSystemException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.nio.file.*;
+import java.util.*;
 
 public class DuplicateDataStore {
 
@@ -18,7 +13,7 @@ public class DuplicateDataStore {
     }
 
     public synchronized void addFile(String hash, Path path) {
-
+        
         if (!map.containsKey(hash))
             map.put(hash, new ArrayList<>());
         try {
@@ -28,14 +23,14 @@ public class DuplicateDataStore {
         } catch (IOException e) {
             System.out.println("I/O error: " + e.getMessage());
         }
-
     }
 
     public HashMap<String, ArrayList<FileRecord>> getMap() {
         return this.map;
     }
 
-    public void deleteFiles(List<FileRecord> files) {
+    public List<FileRecord> deleteFiles(List<FileRecord> files) {
+        List<FileRecord> failed = new ArrayList<>();
 
         for (FileRecord file : files) {
             try {
@@ -48,30 +43,20 @@ public class DuplicateDataStore {
                     if (map.get(hash).size() == 0)
                         map.remove(hash);
                 }
-            }
-            // TODO: CONTROLLER - Instead of just printing this, we should
-            // probably throw an exception here or return a list of failed files
-            // so you can show a Java Swing warning popup to the user!
-
-            catch (NoSuchFileException e) {
-                System.out.println("File doesn't exist at path " + file.toString());
-            } catch (FileSystemException e) {
-                System.out.println("File is locked by another process: " + file.toString());
             } catch (IOException e) {
-                System.out.println("I/O error: " + e.getMessage());
+                failed.add(file);
             }
         }
+        return failed;
     }
 
     public long calcWastedSpace() {
-
         long wasteSize = 0;
 
         for (ArrayList<FileRecord> files : this.map.values()) {
             if (files.size() > 1)
                 wasteSize += (files.getFirst().getSizeInBytes() * (files.size() - 1));
         }
-
         return wasteSize;
     }
 

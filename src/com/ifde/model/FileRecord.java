@@ -3,8 +3,7 @@ package com.ifde.model;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.FileTime;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 //This class is used to populate the File info table
@@ -20,7 +19,7 @@ public class FileRecord {
         this.path = path;
         this.name = this.path.getFileName().toString();
         this.lastModified = DateFormatterHelper
-                .formatFileTime(Files.getLastModifiedTime(path, LinkOption.NOFOLLOW_LINKS));
+                .formatFileTime(Files.getLastModifiedTime(path));
         this.sizeInBytes = Files.size(path);
     }
 
