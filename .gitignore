@@ -4,7 +4,6 @@ out/
 dist/
 dist-input/
 *.class
-*.jar
 dependency-reduced-pom.xml
 
 # IDE
